@@ -1,0 +1,328 @@
+stages:
+  - build
+  - test
+
+default:
+  tags:
+    - enterprise-k8s
+
+build:
+  stage: build
+  image: ${CONTAINER_PATH}/container-base:9.2
+  tags:
+    - vault
+  variables:
+    VAULT_SERVER_URL: $PRE_BUY_VAULT_SERVER_URL
+    VAULT_AUTH_ROLE: $PRE_BUY_VAULT_AUTH_ROLE
+  rules:
+    - if: $TARGET_ENVIRONMENT == "staging"
+      variables:
+        path: 'test_automation/common'
+    - if: $TARGET_ENVIRONMENT == "qa"
+      variables:
+        path: 'test_automation/CommonQA'
+    - if: $TARGET_ENVIRONMENT == "qaPreview"
+      variables:
+        path: 'test_automation/CommonQA'
+    - if: $TARGET_ENVIRONMENT == "stagePreview"
+      variables:
+        path: 'test_automation/common'
+
+  id_tokens:
+    VAULT_ID_TOKEN:
+      aud: https://npd-esms.lllint.com
+
+  secrets:
+    CLIENT_ID:
+      vault: ${path}/CLIENT_ID@app-b2b-kv
+      token: $VAULT_ID_TOKEN
+      file: false
+
+    APIGEE_PASSWORD:
+      vault: ${path}/APIGEE_PASSWORD@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    APIGEE_USERNAME:
+      vault: ${path}/APIGEE_USERNAME@app-b2b-kv
+      token: $VAULT_ID_TOKEN
+      file: false
+
+    CLIENT_SECRET:
+      vault: ${path}/CLIENT_SECRET@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    PARTNER_PASSWORD:
+      vault: ${path}/PARTNER_PASSWORD@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    PARTNER_EMAIL:
+      vault: ${path}/PARTNER_EMAIL@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    MAILER_ACCESS_TOKEN:
+      vault: ${path}/MAILER_ACCESS_TOKEN@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    MAILER_DOMAIN:
+      vault: ${path}/MAILER_DOMAIN@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    MC_USERNAME:
+      vault: ${path}/MC_USERNAME@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    MC_PASSWORD:
+      vault: ${path}/MC_PASSWORD@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    TR_API_KEY:
+      vault: ${path}/TR_API_KEY@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    TR_USERNAME:
+      vault: ${path}/TR_USERNAME@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    X_API_KEY:
+      vault: ${path}/X_API_KEY@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    x_correlation_id:
+      vault: ${path}/x-lll-request-correlation-id@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    X_API_KEY_INVENTORY:
+      vault: ${path}/X_API_KEY_INVENTORY@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    LLL_ACCESS_TOKEN:
+      vault: ${path}/LLL_ACCESS_TOKEN@app-b2b-kv
+      token: $VAULT_ID_TOKEN
+      file: false
+
+    X_ACCESSTOKEN_BYPASSVPN:
+      vault: ${path}/X_ACCESSTOKEN_BYPASSVPN@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    B2B_URL:
+      vault: ${path}/B2B_URL@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    GUIDED_BUSINESS_UNITS_URL:
+      vault: ${path}/GUIDED_BUSINESS_UNITS_URL@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+    INACTIVE_USER_EMAIL:
+      vault: ${path}/INACTIVE_USER_EMAIL@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+    LOCKED_USER_EMAIL:
+      vault: ${path}/LOCKED_USER_EMAIL@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+    ADMIN_USER_EMAIL:
+      vault: ${path}/ADMIN_USER_EMAIL@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    BUYER_USER_EMAIL:
+      vault: ${path}/BUYER_USER_EMAIL@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    FINANCE_USER_EMAIL:
+      vault: ${path}/FINANCE_USER_EMAIL@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    VIEWER_USER_EMAIL:
+      vault: ${path}/VIEWER_USER_EMAIL@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    NuORDER_URL:
+      vault: ${path}/NuORDER_URL@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+    NuORDER_USER_EMAIL:
+      vault: ${path}/NuORDER_USER_EMAIL@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+    
+    NuORDER_USER_PASSWORD:
+      vault: ${path}/NuORDER_USER_PASSWORD@app-b2b-kv
+      token: $VAULT_ID_TOKEN # Stores token for authentication
+      file: false
+
+  script:
+    - echo "CLIENT_ID=${CLIENT_ID}" >> build.env
+    - echo "CLIENT_SECRET=${CLIENT_SECRET}" >> build.env
+    - echo "APIGEE_USERNAME=${APIGEE_USERNAME}" >> build.env
+    - echo "APIGEE_PASSWORD=${APIGEE_PASSWORD}" >> build.env
+    - echo "PARTNER_EMAIL=${PARTNER_EMAIL}" >> build.env
+    - echo "PARTNER_PASSWORD=${PARTNER_PASSWORD}" >> build.env
+    - echo "MAILER_ACCESS_TOKEN=${MAILER_ACCESS_TOKEN}" >> build.env
+    - echo "MAILER_DOMAIN=${MAILER_DOMAIN}" >> build.env
+    - echo "MC_USERNAME=${MC_USERNAME}" >> build.env
+    - echo "MC_PASSWORD=${MC_PASSWORD}" >> build.env
+    - echo "GUIDED_BUSINESS_UNITS_URL=${GUIDED_BUSINESS_UNITS_URL}" >> build.env
+    - echo "TR_API_KEY=${TR_API_KEY}" >> build.env
+    - echo "TR_USERNAME=${TR_USERNAME}" >> build.env
+    - echo "X_API_KEY=${X_API_KEY}" >> build.env
+    - echo "x_correlation_id=${x_correlation_id}" >> build.env
+    - echo "X_API_KEY_INVENTORY=${X_API_KEY_INVENTORY}" >> build.env
+    - echo "X_ACCESSTOKEN_BYPASSVPN=${X_ACCESSTOKEN_BYPASSVPN}" >> build.env
+    - echo "LLL_ACCESS_TOKEN=${LLL_ACCESS_TOKEN}" >> build.env
+    - echo "INACTIVE_USER_EMAIL=${INACTIVE_USER_EMAIL}" >> build.env
+    - echo "LOCKED_USER_EMAIL=${LOCKED_USER_EMAIL}" >> build.env
+    - echo "ADMIN_USER_EMAIL=${ADMIN_USER_EMAIL}" >> build.env
+    - echo "BUYER_USER_EMAIL=${BUYER_USER_EMAIL}" >> build.env
+    - echo "FINANCE_USER_EMAIL=${FINANCE_USER_EMAIL}" >> build.env
+    - echo "VIEWER_USER_EMAIL=${VIEWER_USER_EMAIL}" >> build.env
+    - if [ "$TARGET_ENVIRONMENT" = "qaPreview" ] || [ "$TARGET_ENVIRONMENT" = "stagePreview" ]; then
+      if [ -n "$PREVIEW_B2B_URL" ]; then
+      echo "B2B_URL=$PREVIEW_B2B_URL" >> build.env;
+      else
+      echo "B2B_URL=https://deploy-preview-${CI_MERGE_REQUEST_IID}--qa-b2b-lululemon.netlify.app" >> build.env;
+      fi
+      else
+      echo "B2B_URL=${B2B_URL}" >> build.env;
+      fi
+    - echo "NuORDER_URL=${NuORDER_URL}" >> build.env
+    - echo "NuORDER_USER_EMAIL=${NuORDER_USER_EMAIL}" >> build.env
+    - echo "NuORDER_USER_PASSWORD=${NuORDER_USER_PASSWORD}" >> build.env
+
+  artifacts:
+    reports:
+      dotenv: build.env
+
+dependency-scanning-with-reachability:
+  stage: test
+  needs:
+    - job: build
+  script:
+    - echo "running dependency scanning"
+
+test:
+  stage: test
+  image: mcr.microsoft.com/playwright:v1.44.0-jammy
+  # image: funnyzak/java-nodejs-python-go-etc
+  #parallel: 3
+  allow_failure: false
+  dependencies:
+    - build
+  script:
+    - echo "This is the test job"- echo "This is job id $CI_JOB_ID & job name is $CI_JOB_NAME"
+    - rm -rf node_modules package-lock.json
+    # - add-apt-repository ppa:openjdk-r/ppa
+    - apt-get update -qy
+    # - apt-get install java-common libpcsclite1
+    - apt-get install -y openjdk-11-jdk
+    - java -version
+    - export JAVA_HOME=$JAVA_HOME
+    - apt-get install -y python3 python3-pip
+   
+    - npm install
+    - npm ci
+    - npx playwright install --with-deps
+    #- npx playwright install
+    - npx playwright install chrome
+    - npx playwright install msedge
+    - npx playwright install webkit
+    - npx playwright install firefox
+    - npm install -g allure-commandline
+    - npm install csv-parse
+    - python3 --version
+    - pip3 install trcli
+    - echo $SHARD_INDEX
+    - echo $SHARD_COUNT
+    - echo $BROWSER_NAME
+    - echo $TAG_NAME
+    - echo $CI_NODE_INDEX
+    - echo $CI_NODE_TOTAL
+    - echo $ENV
+    #- npx playwright test tests/prebuy-frontend/*.spec.ts --project=Chrome
+    - npx playwright test --grep $TAG_NAME --project=Chrome --workers=1
+    #- if [ "$TARGET_ENVIRONMENT" = "qaPreview" ] || [ "$TARGET_ENVIRONMENT" = "stagePreview" ]; then
+    #  npx playwright test --grep $TAG_NAME --project=Firefox;
+    #  else
+    #  npx playwright test --grep $TAG_NAME --project=Chrome;
+    #  fi
+
+  after_script:
+    - echo "generating the allure report command follows"
+    - npx allure generate ./test-reports/allure-results --clean --single-file -o ./test-reports/allure-report
+    - echo "allure report generation command executed"
+    - 'curl -X POST -H "Content-type: application/json" --data "{\"text\":\"<b>$CI_JOB_NAME execution completed</b><br><b>Environment:</b> $ENV<br><b>App Name:</b> $CI_PROJECT_NAME<br><b>Job ID:</b> $CI_JOB_ID<br><b>Status:</b> $CI_JOB_STATUS<br><b>Functionality executed:</b> $TAG_NAME<br><b>Refer the link below for test results:</b><br> - https://gitlab.com/lululemon/global-tech-services/tech-retail-engineering-can/b2b/b2b-qa/b2b-prebuy-qa-automation/-/jobs/${CI_JOB_ID}/artifacts/browse/test-reports/allure-report\"}"  ${PRE_BUY_NON_PROD_TEAMS_WEBHOOK} || true'
+  when: always
+
+  artifacts:
+    when: always
+    paths: #assuming deafult playwright artifacts paths
+      - ./test-reports/allure-report
+    expire_in: 3 days
+variables:
+  JAVA_HOME: '/usr/lib/jvm/java-11-openjdk-amd64'
+  #SHARD_COUNT: 3 # Number of shards
+  #SHARD_INDEX: $CI_NODE_INDEX #index of the shard provided by gitlab
+  ENV: $TARGET_ENVIRONMENT
+  MC_USERNAME: $MC_USERNAME
+  MC_PASSWORD: $MC_PASSWORD
+  X_API_KEY: $X_API_KEY
+  X_REQUEST_CORRELATION_ID: $x_correlation_id
+  TR_API_KEY: $TR_API_KEY
+  MAILER_ACCESS_TOKEN: $MAILER_ACCESS_TOKEN
+  MAILER_DOMAIN: $MAILER_DOMAIN
+  PARTNER_EMAIL: $PARTNER_EMAIL
+  PARTNER_PASSWORD: $PARTNER_PASSWORD
+  APIGEE_USERNAME: $APIGEE_USERNAME
+  APIGEE_PASSWORD: $APIGEE_PASSWORD
+  CLIENT_ID: $CLIENT_ID
+  CLIENT_SECRET: $CLIENT_SECRET
+  X_API_KEY_INVENTORY: $X_API_KEY_INVENTORY
+  LLL_ACCESS_TOKEN: $LLL_ACCESS_TOKEN
+  X_ACCESSTOKEN_BYPASSVPN: $X_ACCESSTOKEN_BYPASSVPN
+  INACTIVE_USER_EMAIL: $INACTIVE_USER_EMAIL
+  LOCKED_USER_EMAIL: $LOCKED_USER_EMAIL
+  ADMIN_USER_EMAIL: $ADMIN_USER_EMAIL
+  BUYER_USER_EMAIL: $BUYER_USER_EMAIL
+  FINANCE_USER_EMAIL: $FINANCE_USER_EMAIL
+  VIEWER_USER_EMAIL: $VIEWER_USER_EMAIL
+  PLAYWRIGHT_WORKERS: 6 # Set this to 4 or 6 or 8 as needed
+  B2B_URL: $B2B_URL
+
+  TARGET_ENVIRONMENT:
+    value: 'staging'
+    options:
+      - 'qa'
+      - 'staging'
+      - 'qaPreview'
+      - 'stagePreview'
+    description: "This is the target environment on  which you want the tests to execute. Set to 'qa' by default."
+
+  TAG_NAME:
+    value: '@smoke'
+    options:
+      - '@reg'
+      - '@smoke'
+      - '@e2e'
+    description: "Select the tag the tests to execute on. Set to '@smoke' by default."
+
+  PREVIEW_B2B_URL:
+    description: "Enter the preview URL if you want to run the tests on a preview environment. Set to '' by default."

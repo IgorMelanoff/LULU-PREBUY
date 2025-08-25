@@ -1,0 +1,16 @@
+#folders
+node_modules
+allure-results
+html-report
+test-results
+allure-report
+test-reports
+
+#files
+.DS_Store
+.env
+info.log
+.vscode/launch.json
+.env.qa
+.env.staging
+.env.preview
